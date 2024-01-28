@@ -2,6 +2,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./Student.sol";
+import "./Employer.sol";
 
 contract EducationalInstitution is ERC721 {
 
@@ -15,15 +16,16 @@ contract EducationalInstitution is ERC721 {
     int private nounce;
     address private owner;
     mapping (uint256=>DegreeData) private _dict;
+    mapping(address => Employer) public employers;
 
     constructor() ERC721("DegreeToken", "DGT") {
         owner = msg.sender;
         nounce = 0;
     }
 
-    function issueDegree(address student, 
-    string memory school, 
-    string memory grade, 
+    function issueDegree(address student,
+    string memory school,
+    string memory grade,
     string memory department,
     string memory name) public {
         require(msg.sender==owner,"only the institution can issue degree");
@@ -34,6 +36,8 @@ contract EducationalInstitution is ERC721 {
 
     function queryDegree(address student, uint256 tokenId) public view returns (DegreeData memory) {
         require(student == ownerOf(tokenId), "student is not the owner of tokenId");
+        Employer employer = employers[msg.sender];
+        require(address(employer) != address(0), "Employer not registered");
         return _dict[tokenId];
     }
 
