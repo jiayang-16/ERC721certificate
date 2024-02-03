@@ -104,7 +104,25 @@ import { ethers } from 'ethers';
     } catch (e) {
       console.log("Passed: Correctly handled querying a non-existent degree.");
     }    
-    
+
+const provider = new ethers.providers.JsonRpcProvider(); 
+const attacker = new ethers.Wallet(ethers.utils.randomBytes(32), provider);
+const institutionAsAttacker = institution.connect(attacker);
+(async () => {
+  try {
+    await institutionAsAttacker.issueDegree(
+      ethers.utils.getAddress(attacker.address),
+      "HackerUniversity",
+      "A+",
+      "Hacking",
+      "Hacker"
+    );
+    console.error("Failed: Attacker should not be able to issue a degree.");
+  } catch (e) {
+    console.log("Passed: Successfully prevented attacker from issuing a degree.");
+  }
+})();
+
 
   } catch (e) {
     console.log(e.message)
