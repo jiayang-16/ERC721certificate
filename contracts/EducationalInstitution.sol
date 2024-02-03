@@ -1,8 +1,6 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "./Student.sol";
-import "./Employer.sol";
 
 contract EducationalInstitution is ERC721 {
 
@@ -15,8 +13,8 @@ contract EducationalInstitution is ERC721 {
 
     int private nounce;
     address private owner;
-    mapping (uint256=>DegreeData) private _dict;
-    mapping(address => Employer) public employers;
+    mapping (uint256=>DegreeData) private degrees;
+    mapping(address => bool) private employers;
 
     constructor() ERC721("DegreeToken", "DGT") {
         owner = msg.sender;
@@ -30,15 +28,19 @@ contract EducationalInstitution is ERC721 {
     string memory name) public {
         require(msg.sender==owner,"only the institution can issue degree");
         uint256 tokenId = uint256(generateUniqueId());
-        _dict[tokenId] = DegreeData(school, grade, department, name);
+        degrees[tokenId] = DegreeData(school, grade, department, name);
         _safeMint(student, tokenId);
+    }
+
+    function registerEmployer(address employerAddress) public {
+        require(msg.sender == owner, "only the institution can register employer");
+        employers[employerAddress] = true;
     }
 
     function queryDegree(address student, uint256 tokenId) public view returns (DegreeData memory) {
         require(student == ownerOf(tokenId), "student is not the owner of tokenId");
-        Employer employer = employers[msg.sender];
-        require(address(employer) != address(0), "Employer not registered");
-        return _dict[tokenId];
+        require(msg.sender == student || employers[msg.sender] == true || msg.sender == owner, "query unauthorized");
+        return degrees[tokenId];
     }
 
     function generateUniqueId() public returns (bytes32) {

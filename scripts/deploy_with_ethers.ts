@@ -14,6 +14,7 @@ import { ethers } from 'ethers';
     console.log(`address: ${student1.address}`)
     const student2 = await deploy("Student", [institution.address],3)
     console.log(`address: ${student2.address}`)
+    institution.registerEmployer(employer.address)
     const stu1_address = ethers.utils.getAddress(student1.address)
     const stu2_address = ethers.utils.getAddress(student2.address)
     await institution.issueDegree(stu1_address,"NTU","B+","SPMS","Alice")
@@ -21,8 +22,11 @@ import { ethers } from 'ethers';
     const stu1_tokens = await student1.getTokens()
     // const stu2_tokens = await student2.getTokens()
     for(let i = 0;i < stu1_tokens.length;i++) {
-      const result = await institution.queryDegree(stu1_address, stu1_tokens[i])
-      console.log("verify result:",result)
+      console.log("token_id:",stu1_tokens[i])
+      const result1 = await employer.queryDegree(stu1_address, stu1_tokens[i])
+      console.log("verify employer query result:",result1)
+      const result2 = await student1.queryDegree(stu1_address, stu1_tokens[i])
+      console.log("verify student query result:",result2)
     }
   } catch (e) {
     console.log(e.message)

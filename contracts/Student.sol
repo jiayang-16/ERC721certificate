@@ -1,13 +1,17 @@
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "./EducationalInstitution.sol";
+
 contract Student is IERC721Receiver {
     // address public owner;
-    address public institution;
     uint256 [] private tokens;
 
-    constructor(address _institution) {
-        // owner = msg.sender;
-        institution = _institution;
+    EducationalInstitution private educationalInstitution;
+    address private instituionAddress;
+
+    constructor(address _institutionAddress) {
+        educationalInstitution = EducationalInstitution(_institutionAddress);
+        instituionAddress = _institutionAddress;
     }
 
     function onERC721Received(
@@ -16,12 +20,16 @@ contract Student is IERC721Receiver {
         uint256 tokenId,
         bytes calldata data
     ) external override returns (bytes4) {
-        require(msg.sender==institution,"only accept token from institution");
+        require(msg.sender==instituionAddress,"only accept token from institution");
         tokens.push(tokenId);
         return IERC721Receiver.onERC721Received.selector;
     }
 
     function getTokens() public view returns (uint256[] memory) {
         return tokens;
+    }
+
+    function queryDegree(address student, uint256 tokenId) public view returns (EducationalInstitution.DegreeData memory) {
+        return educationalInstitution.queryDegree(student, tokenId);
     }
 }
