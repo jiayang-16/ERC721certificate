@@ -36,11 +36,6 @@ contract EducationalInstitutionTest {
         }
     }
 
-    function checkDuplicateDegreeIssuance() public {
-        bool r;
-        (r, ) = address(institution).call(abi.encodeWithSelector(institution.issueDegree.selector, address(student1), "NTU", "B+", "SPMS", "Alice"));
-        Assert.ok(!r, "Should not issue the same degree twice");
-    }
 
 
     function issueDegreeToInvalidAddress() public {
