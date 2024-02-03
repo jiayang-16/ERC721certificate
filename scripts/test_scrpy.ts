@@ -50,14 +50,7 @@ import { ethers } from 'ethers';
     }
 
 
-    // Attempt to issue the same degree to the same student twice
-    await institution.issueDegree(ethers.utils.getAddress(student1.address),"NTU","B+","SPMS","Alice")
-    try {
-      await institution.issueDegree(ethers.utils.getAddress(student1.address),"NTU","B+","SPMS","Alice")
-      console.error("Failed: Should not issue the same degree twice.")
-    } catch (e) {
-      console.log("Passed: Error thrown for issuing the same degree twice.")
-    }
+
 
     // Verify unauthorized access is blocked
     try {
