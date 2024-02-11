@@ -43,8 +43,12 @@ contract EducationalInstitution is ERC721 {
         return degrees[tokenId];
     }
 
-    function generateUniqueId() public returns (bytes32) {
+    function generateUniqueId() private returns (bytes32) {
         nounce += 1;
         return keccak256(abi.encodePacked(block.timestamp, msg.sender, nounce));
+    }
+
+    function transferFrom(address from, address to, uint256 tokenId) public override {
+        require(false, "Token transfers are disabled in this contract");
     }
 }
