@@ -50,8 +50,6 @@ import { ethers } from 'ethers';
     }
 
 
-
-
     // Verify unauthorized access is blocked
     try {
       // Assuming there's a function to simulate unauthorized access
@@ -79,6 +77,30 @@ import { ethers } from 'ethers';
       console.error("Failed: No tokens found for student1.");
     }
     // Test illegal operations
+try {
+    // Assuming student1 has at least one token issued
+    const stu1_tokens = await student1.getTokens();
+    if (stu1_tokens.length > 0) {
+      const tokenId = stu1_tokens[0]; // Use the first token for testing
+      const stu1_address = ethers.utils.getAddress(student1.address);
+      const stu2_address = ethers.utils.getAddress(student2.address);
+      
+      // Attempt to transfer the token from student1 to student2
+      try {
+        await institution.transferFrom(stu1_address, stu2_address, tokenId);
+        console.error("Failed: Transfer should not succeed.");
+      } catch (e) {
+        console.log("Passed: Transfer blocked successfully.");
+      }
+    } else {
+      console.error("No tokens found for student1, cannot test transferFrom.");
+    }
+  } catch (e) {
+    console.log(`Error during transferFrom test: ${e.message}`);
+  }
+
+
+
     // Attempt to issue a degree from an unauthorized address (simulated by not using the onlyOwner modifier in a catch block)
     try {
       // This assumes deploy function simulates deployment from different addresses
@@ -120,4 +142,7 @@ const institutionAsAttacker = institution.connect(attacker);
   } catch (e) {
     console.log(e.message)
   }
+
+
+  
 })()
