@@ -120,6 +120,7 @@ try {
       console.log("Passed: Correctly handled querying a non-existent degree.");
     }    
 
+//Test issueing degrees by simulating the behavior of an educational institution:
 const provider = new ethers.providers.JsonRpcProvider(); 
 const attacker = new ethers.Wallet(ethers.utils.randomBytes(32), provider);
 const institutionAsAttacker = institution.connect(attacker);
